@@ -622,7 +622,11 @@ class BearerAuthMiddleware:
 
 
 def build_http_app():
-    tokens = [t.strip() for t in os.environ.get("MCP_AUTH_TOKENS", "").split(",") if t.strip()]
+    raw_value = os.environ.get("MCP_AUTH_TOKENS", "")
+    print(f"[DEBUG] MCP_AUTH_TOKENS value length: {len(raw_value)}", file=sys.stderr)
+    print(f"[DEBUG] MCP_AUTH_TOKENS value: '{raw_value[:20]}...' if raw_value else 'EMPTY'", file=sys.stderr)
+    tokens = [t.strip() for t in raw_value.split(",") if t.strip()]
+    print(f"[DEBUG] Tokens found: {len(tokens)}, lengths: {[len(t) for t in tokens]}", file=sys.stderr)
     if not tokens or any(len(t) < 32 for t in tokens):
         raise SystemExit(
             "Defina MCP_AUTH_TOKENS com um ou mais tokens de pelo menos 32 caracteres "
